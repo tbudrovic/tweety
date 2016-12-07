@@ -1,6 +1,12 @@
 class UsersController < ApplicationController
   before_action :check_if_authorized, only: [ :update ]
 
+  def index
+    @users = User.all
+
+    render json: @users
+  end
+
   def create
     @user = User.new(filter_params)
 

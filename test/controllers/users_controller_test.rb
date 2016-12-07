@@ -28,4 +28,16 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :unauthorized
   end
+
+  test 'listing of all users' do
+    get '/users',
+        as: :json
+
+    users = JSON.parse(response.body)
+
+    assert_equal users[0]['id'], 1
+    assert_equal users[0]['name'], 'firstuser'
+
+    assert_response :ok
+  end
 end
