@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include ActionController::HttpAuthentication::Basic::ControllerMethods
+  before_action :document_action
 
   protected
   def authenticate_user
@@ -8,5 +9,17 @@ class ApplicationController < ActionController::API
     else
       head :unauthorized
     end
+  end
+
+  def document_action
+    unless request.headers['User-Agent']
+      browser = "Rails test suite"
+    else
+      browser = request.headers['User-Agent']
+    end
+
+    File.open(Rails.root.join('log', 'usage.log'), 'a+') { |file|
+      file.write("#{request.fullpath}\t#{browser}\n")
+    }
   end
 end
