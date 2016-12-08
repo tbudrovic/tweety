@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
-  before_action :check_if_authorized, only: [ :update ]
+  before_action :set_user, only: [ :show, :update ]
+  before_action :authenticate_user, only: [ :update ]
+  before_action :authorize_user, only: [ :update ]
 
   def index
     @users = User.all
@@ -7,29 +9,42 @@ class UsersController < ApplicationController
     render json: @users
   end
 
+  def show
+    render json: @user
+  end
+
   def create
-    @user = User.new(filter_params)
+    @user = User.new(user_params)
 
     if @user.save
-      head :created
+      render json: @user, status: :created, location: @user
     else
-      head :bad_request
+      render json: @tweet.errors, status: :unprocessable_entity
     end
   end
 
   def update
-    @user = User.find(params[:id])
-
-    if @user.update(password: filter_params[:password])
-      head :no_content
+    if @user.update(password: user_params[:password])
+      render json: @tweet
     else
-      head :bad_request
+      render json: @tweet.errors, status: :unprocessable_entity
     end
   end
 
 
-  protected
-  def filter_params
+  private
+
+  def set_user
+    @user = User.find(params[:id])
+  end
+  
+  def user_params
     params.permit(:name, :password)
+  end
+
+  def authorize_user
+    unless @user == @current_user
+      head :unauthorized
+    end
   end
 end

@@ -4,17 +4,17 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-default:
-  id: 3
-  name: 'randomuser'
-  password_digest: <%= BCrypt::Password.create('randompass').to_s %>
-
-firstuser:
+one:
   id: 1
-  name: 'firstuser'
-  password_digest: <%= BCrypt::Password.create('secretpass').to_s %>
+  user_id: 1
+  content: "Hello, world!"
 
-a:
+two:
   id: 2
-  name: 'jdfksa'
-  password_digest: <%= BCrypt::Password.create('889').to_s %>
+  user_id: 1
+  content: "It's pretty lonely in here, isn't it?"
+
+three:
+  id: 3
+  user_id: 2
+  content: "Alternative user wrote this"

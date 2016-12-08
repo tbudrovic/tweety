@@ -18,7 +18,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
            headers: { 'HTTP_AUTHORIZATION': encoded_credentials },
            as: :json
 
-    assert_response :no_content
+    assert_response :ok
   end
 
   test 'user can not modify password unless user is authorized' do
