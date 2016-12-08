@@ -1,8 +1,12 @@
 require 'test_helper'
 
 class UsersControllerTest < ActionDispatch::IntegrationTest
+  setup do
+    @user = users(:firstuser)
+  end
+  
   test "user creation when specifying good parameters" do
-    post '/users', 
+    post users_path, 
          params: { name: 'fdjksa', password: 'jksdfa' },
          as: :json
 
@@ -11,9 +15,9 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
 
   test "user can modify password when user is authorized" do
     encoded_credentials = 
-      ActionController::HttpAuthentication::Basic.encode_credentials(users(:firstuser).name,
+      ActionController::HttpAuthentication::Basic.encode_credentials(@user.name,
                                                                      'secretpass')
-    put '/users/1',
+    put user_path(@user),
            params: { password: 'newpassword' },
            headers: { 'HTTP_AUTHORIZATION': encoded_credentials },
            as: :json
@@ -22,7 +26,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'user can not modify password unless user is authorized' do
-    put '/users/1',
+    put user_path(@user),
            params: { password: 'newpassword' },
            as: :json
 
@@ -30,7 +34,7 @@ class UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'listing of all users' do
-    get '/users',
+    get users_path,
         as: :json
 
     users = JSON.parse(response.body)
